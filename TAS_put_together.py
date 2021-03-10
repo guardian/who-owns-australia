@@ -3,6 +3,7 @@ import geopandas as gpd
 from paths import data_path
 
 data_path = data_path + "/Tas/"
+output_path = data_path + "cleaned_data/"
 
 land_tenure_shp = f'{data_path}LIST_LAND_TENURE_STATEWIDE/list_land_tenure_statewide.shp'
 authority_shp = f'{data_path}JNichols_Authority_Land/cadastre_authority_detail.shp'
@@ -71,9 +72,12 @@ difference = gpd.overlay(priv_pub, aboriginal_gdf, how="difference")
 
 appended = difference.append(aboriginal_gdf)
 
-appended.to_file(f'{data_path}tas_piv_pub_ab.shp')
+appended.to_file(f'{output_path}tas_piv_pub_ab.shp')
 
 print(appended)
+
+
+
 
 # Join the two datasets
 
