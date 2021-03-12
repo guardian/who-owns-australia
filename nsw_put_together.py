@@ -22,7 +22,11 @@ gdf.loc[gdf['controllingauthorityoid'].isin(unknown), 'Ownership'] = "Unknown"
 gdf2['Ownership'] = "Public"
 gdf3['Ownership'] = "Public"
 
+gdf = gpd.overlay(gdf, gdf2, how="difference")
+
 gdf = gdf.append(gdf2)
+
+gdf = gpd.overlay(gdf, gdf3, how="difference")
 
 gdf = gdf.append(gdf3)
 
