@@ -23,6 +23,7 @@ gdf = gdf.loc[~gdf['TENURE'].isin(leave_out)]
 gdf.loc[gdf['TENURE'].isin(public), 'Ownership'] = "Public"
 gdf.loc[gdf['TENURE'].isin(private), 'Ownership'] = "Private"
 
-gdf = gdf[['geometry', 'Ownership']]
+# gdf = gdf[['geometry', 'Ownership']]
 
 gdf.to_file(f"{output_path}qld_pub_priv.shp")
+

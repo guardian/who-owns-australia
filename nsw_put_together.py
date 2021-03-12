@@ -5,17 +5,28 @@ from paths import data_path
 data_path = data_path + "/NSW/"
 output_path = data_path + "cleaned_data/"
 
-data = f"{data_path}DP_QLD_DCDB_WOS_CUR.gdb"
+data = f"{data_path}STATE_cadastral_2020-08-01.gdb"
 
 gdf = gpd.read_file(data, layer="Lot")
+gdf2 = gpd.read_file(data, layer="NPWSReserve")
+gdf3 = gpd.read_file(data, layer="StateForest")
 
-private = ["Freehold"]
-public = ["Crown", "Unknown", "Local Government Authority", "Shared Crown/ Council", "NSW Government", "Australian Government"]
+private = ['FREEHOLD']
+unknown = ['UNKNOWN']
+public = ['CROWN', "LOCAL GOVERNMENT AUTHORITY", "SHARED CROWN / COUNCIL", "NSW GOVERNMENT", "AUSTRALIAN GOVERNEMENT"]
 
 gdf.loc[gdf['controllingauthorityoid'].isin(public), 'Ownership'] = "Public"
 gdf.loc[gdf['controllingauthorityoid'].isin(private), 'Ownership'] = "Private"
+gdf.loc[gdf['controllingauthorityoid'].isin(unknown), 'Ownership'] = "Unknown"
 
-gdf = gdf[['geometry', 'Ownership']]
+gdf2['Ownership'] = "Public"
+gdf3['Ownership'] = "Public"
+
+gdf = gdf.append(gdf2)
+
+gdf = gdf.append(gdf3)
+
+# gdf = gdf[['geometry', 'Ownership']]
 
 gdf.to_file(f"{output_path}nsw_pub_priv.shp")
 

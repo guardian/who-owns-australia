@@ -12,7 +12,7 @@ gdf.loc[gdf['TENURE'] == "PUBLIC", "Ownership"] = "Public"
 gdf.loc[gdf['TENURE'] == "PRIVATE", "Ownership"] = "Private"
 
 
-gdf = gdf[['Ownership', 'geometry']]
+# gdf = gdf[['Ownership', 'geometry']]
 
 gdf.to_file(f"{output_path}vic_pub_private.shp")
 

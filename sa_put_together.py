@@ -25,7 +25,7 @@ for thing in public:
 
 print(gdf)
 
-gdf = gdf[['Ownership', 'geometry']]
+# gdf = gdf[['Ownership', 'geometry']]
 
 gdf.to_file(f"{output_path}sa_pub_private.shp")
 
