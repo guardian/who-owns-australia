@@ -21,7 +21,7 @@ authority_shp = f'{data_path}JNichols_Authority_Land/cadastre_authority_detail.s
 
 ### LOAD AND CLASSIFY LAND TENURE DATA
 
-# land_tenure_gdf = gpd.read_file(land_tenure_shp)
+land_tenure_gdf = gpd.read_file(land_tenure_shp)
 
 def sort_tas_map(dataframe, public_listo, private_listo, other_listo, output_string):
     dataframe['Ownership'] = "Public"
@@ -34,47 +34,23 @@ def sort_tas_map(dataframe, public_listo, private_listo, other_listo, output_str
     dataframe.to_file(output_string)
 
 
-# ### THE FOLLOWING ARE BRAKDOWNS FOR CLASSIFICATION
-# public_land_classification = ['Conservation Area','Game Reserve', 'Historic Site', 'National Park', 'Nature Recreation Area', 'Nature Reserve', 'Regional Reserve', 'State Reserve', 'Public Reserve', 'Permanent Timber Production Zone Land']
-# # https://listdata.thelist.tas.gov.au/public/LIST_Public_Land_Classification_information.pdf
+### THE FOLLOWING ARE BRAKDOWNS FOR CLASSIFICATION
+public_land_classification = ['Conservation Area','Game Reserve', 'Historic Site', 'National Park', 'Nature Recreation Area', 'Nature Reserve', 'Regional Reserve', 'State Reserve', 'Public Reserve', 'Permanent Timber Production Zone Land']
+# https://listdata.thelist.tas.gov.au/public/LIST_Public_Land_Classification_information.pdf
 
-# private_land_classification = ['Private Sanctuary', 'Private Nature Reserve', 'Conservation Covenant', 'Private Freehold']
-# # https://listdata.thelist.tas.gov.au/public/LIST_Private_Reserves_information.pdf
+private_land_classification = ['Private Sanctuary', 'Private Nature Reserve', 'Conservation Covenant', 'Private Freehold']
+# https://listdata.thelist.tas.gov.au/public/LIST_Private_Reserves_information.pdf
 
-# other_gov = ['Wellington Park', 'Crown Land','Casement','Tas Irrigation','Commonwealth','Tas Water','Future Potential Production Forest (Crown)', 'Future Potential Production Forest (HEC)','Authority Crown' ,'Authority Freehold','Local Government Act Reserve','Hydro-Electric Corporation','Local Government','HEC Conservation Area','LGA Conservation Area']
+other_gov = ['Wellington Park', 'Crown Land','Casement','Tas Irrigation','Commonwealth','Tas Water','Future Potential Production Forest (Crown)', 'Future Potential Production Forest (HEC)','Authority Crown' ,'Authority Freehold','Local Government Act Reserve','Hydro-Electric Corporation','Local Government','HEC Conservation Area','LGA Conservation Area']
 
-# other_places = ['Inland Water']
+other_places = ['Inland Water']
 
-# public_land_classification = public_land_classification + other_gov
+public_land_classification = public_land_classification + other_gov
 
-# # sort_tas_map(land_tenure_gdf, public_land_classification, private_land_classification, other_places, f'{data_path}public_private/TasPublicPrivateLand.shp')
+# sort_tas_map(land_tenure_gdf, public_land_classification, private_land_classification, other_places, f'{data_path}public_private/TasPublicPrivateLand.shp')
 
 ## SECOND ROUND
 
-#### Combine Aboriginal and Private/Public
-
-priv_pub = gpd.read_file(f'{data_path}public_private/TasPublicPrivateLand.shp')
-
-priv_pub = priv_pub[['geometry', 'Ownership']]
-
-aboriginal_gdf = gpd.read_file(f'{data_path}/aboriginal_land/200819TasAboriginalLand.shp')
-
-aboriginal_gdf = aboriginal_gdf[['geometry', 'Ownership']]
-
-
-## CUT OUT THE OVERLAP
-
-# dissolved = priv_pub.dissolve(by="Ownership", aggfunc="last")
-
-## APPEND THE ABORIGINAL DATASET
-
-difference = gpd.overlay(priv_pub, aboriginal_gdf, how="difference")
-
-appended = difference.append(aboriginal_gdf)
-
-appended.to_file(f'{output_path}tas_piv_pub_ab.shp')
-
-print(appended)
 
 
 
