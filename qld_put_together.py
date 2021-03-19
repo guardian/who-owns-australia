@@ -17,13 +17,34 @@ data = f"{data_path}DP_QLD_DCDB_WOS_CUR.gdb"
 
 
 gdf = gpd.read_file(data, layer = "QLD_CADASTRE_DCDB")
+gdf = gdf.to_crs("EPSG:4326")
 
 gdf = gdf.loc[~gdf['TENURE'].isin(leave_out)]
 
-gdf.loc[gdf['TENURE'].isin(public), 'Ownership'] = "Public"
-gdf.loc[gdf['TENURE'].isin(private), 'Ownership'] = "Private"
+print("Read")
 
-# gdf = gdf[['geometry', 'Ownership']]
+past = gpd.read_file(f"{data_path}pastoral/qld_pastoral.shp")
+past = past.to_crs("EPSG:4326")
 
-gdf.to_file(f"{output_path}qld_pub_priv.shp")
+print("Read 2")
+
+difference = gpd.overlay(gdf, past, how="difference")
+combo = difference.append(past)
+
+print("Differenced")
+
+combo['Ownership'] = "Public"
+combo.loc[combo['TENURE'].isin(private), 'Ownership'] = "Private"
+combo.loc[combo['Pastoral_c'] == "Pastoral", 'Ownership'] = "Pastoral"
+
+combo['Control'] = "Public"
+combo.loc[combo['Ownership'] == "Private", 'Control'] = "Private"
+combo.loc[combo['Ownership'] == "Pastoral", 'Control'] = "Private"
+
+print("Reclassified")
+
+print(combo)
+
+
+combo.to_file(f"{output_path}qld_pub_priv_past.shp")
 
