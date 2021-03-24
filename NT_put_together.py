@@ -17,7 +17,29 @@ gdf['Control'] = "Public"
 gdf.loc[gdf['TEN_DESC'] == 'Perpetual Pastoral Lease', "Control"] = "Private"
 gdf.loc[gdf['TEN_DESC'] == 'Pastoral Lease', "Control"] = "Private"
 
-print("First one read")
+gdf = gdf.dissolve(by="Ownership")
+
+# public = gdf.copy()
+# public['Ownership'] = "Public"
+# public['Control'] = 'Public'
+# # public = public.dissolve(by="Ownership")
+
+# pastoral_list = ['Perpetual Pastoral Lease', 'Pastoral Lease']
+# pastoral = gdf.loc[gdf['TEN_DESC'].isin(pastoral_list)].copy()
+# pastoral['Ownership'] = 'Pastoral'
+# pastoral['Control'] = "Private"
+
+# print("Assigned")
+
+# gdf = gpd.overlay(public, pastoral, how="difference")
+
+# gdf = gdf.append(pastoral)
+
+# print("First difference")
+
+# ## gdf = gdf.loc[gdf['geometry'].geom_type == 'LineString']
+
+gdf.to_file(f"{output_path}nt_pub_past_dissolved.shp")
 
 # ind = gpd.read_file(indig)
 # ind = ind.to_crs("EPSG:4326")
@@ -34,5 +56,7 @@ print("First one read")
 # print("Differenced")
 
 # combo.to_file(f"{output_path}nt_pub_past.shp")
+
+# gdf = gdf.loc[gdf['geometry'].geom_type != 'LineString']
 
 # gdf.to_file(f"{output_path}nt_pub_past.shp")
