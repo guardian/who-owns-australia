@@ -35,13 +35,17 @@ def sort_tas_map(dataframe, public_listo, private_listo, other_listo, output_str
 
 
 ### THE FOLLOWING ARE BRAKDOWNS FOR CLASSIFICATION
-public_land_classification = ['Conservation Area','Game Reserve', 'Historic Site', 'National Park', 'Nature Recreation Area', 'Nature Reserve', 'Regional Reserve', 'State Reserve', 'Public Reserve', 'Permanent Timber Production Zone Land']
+public_land_classification = ['Conservation Area','Game Reserve', 'Historic Site', 'National Park', 'Nature Recreation Area', 
+'Nature Reserve', 'Regional Reserve', 'State Reserve', 'Public Reserve', 'Permanent Timber Production Zone Land']
 # https://listdata.thelist.tas.gov.au/public/LIST_Public_Land_Classification_information.pdf
 
 private_land_classification = ['Private Sanctuary', 'Private Nature Reserve', 'Conservation Covenant', 'Private Freehold']
 # https://listdata.thelist.tas.gov.au/public/LIST_Private_Reserves_information.pdf
 
-other_gov = ['Wellington Park', 'Crown Land','Casement','Tas Irrigation','Commonwealth','Tas Water','Future Potential Production Forest (Crown)', 'Future Potential Production Forest (HEC)','Authority Crown' ,'Authority Freehold','Local Government Act Reserve','Hydro-Electric Corporation','Local Government','HEC Conservation Area','LGA Conservation Area']
+other_gov = ['Wellington Park', 'Crown Land','Casement','Tas Irrigation','Commonwealth','Tas Water',
+'Future Potential Production Forest (Crown)', 'Future Potential Production Forest (HEC)','Authority Crown',
+'Authority Freehold','Local Government Act Reserve','Hydro-Electric Corporation','Local Government','HEC Conservation Area',
+'LGA Conservation Area']
 
 other_places = ['Inland Water']
 
