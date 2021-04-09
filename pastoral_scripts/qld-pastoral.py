@@ -25,45 +25,40 @@ def fuzzy_merge(df_1, df_2, key1, key2, threshold=90, limit=2):
     
     return df_1
 
-# CSV of pastoral properties/owners extracted from the article last year, as well as Josh research
+
+sa_pastoral = f"{data_path}/pastoral/qld_pastoral.shp"
+gdf = gpd.read_file(sa_pastoral)
+gdf = gdf.dropna(subset=["NAME"])
+
+joel_pastoral = f"{data_path}/Pastoral_ownership_data_2020_08_18_noWA.xlsx"
+
+joel = pd.read_excel(joel_pastoral, sheet_name=1, skiprows=2)
+joel_nt = joel.loc[joel['State'] == "QLD"]
+joel_nt = joel_nt[['Pastoral Station', 'CCG_owner','CCG_References']]
+joel_nt.columns = ['Name', "Owner", "Source"]
+
+
+
 extracted_pastoral = f"{data_path}/Extracted_pastoral.csv"
-
-# CSV of WA Pastoral properties/ owners scraped from the WA Brand Registry
-wa_brand_scraped = f"{data_path}/WA/WA_second_extraction.csv"
-
-wa_pastoral = f"{data_path}/pastoral/wa_pastoral.shp"
-gdf = gpd.read_file(wa_pastoral)
-gdf = gdf.dropna(subset=["PROPERTY_N"])
-gdf = gdf.loc[gdf['Pastoral_L'] != "Mining"]
-
-
-
 extra = pd.read_csv(extracted_pastoral)
-extra = extra.loc[extra['State'] == "WA"]
+
+extra = extra.loc[extra['State'] == "QLD"]
 extra = extra[['Name', 'Owner (Josh)', 'Source']]
 extra.columns = ['Name', "Owner", "Source"]
 extra['Name'] = extra['Name'].str.title()
 
+# # Only select the pastoral properties in extra that aren't in Joel's
+extra = fuzzy_merge(extra, joel_nt, "Name", "Name")
+extra = extra.loc[extra['matches'] == '']
 
-bran_df = pd.read_csv(wa_brand_scraped)
-bran_df['Name'] = bran_df['Station'].str.title()
-bran_df = bran_df.drop_duplicates(subset="Station", keep="last")
-# bran_df.rename(columns={"Owner":"Brands owner"}, inplace=True)
-bran_df['Owner'] = bran_df['Owner'].str.title()
-bran_df['Source'] = "WA brand directory"
+extra = extra[['Name', 'Owner', 'Source']]
 
-
-# Work out which ones in brand are also in extra
-bran_df = fuzzy_merge(bran_df, extra, "Name", "Name")
-bran_df = bran_df.loc[bran_df['matches'] == '']
-bran_df = bran_df[['Name', 'Owner', 'Source']]
-
-combo = extra.append(bran_df)
-combo = combo.dropna(subset=["Owner"])
+combo = joel_nt.append(extra)
+combo.drop_duplicates(subset=['Name'], keep="first")
 
 
-matched = fuzzy_merge(gdf, combo, "PROPERTY_N", "Name")  
+matched = fuzzy_merge(gdf, combo, "NAME", "Name")  
 
 joined = matched.merge(combo, left_on="matches", right_on="Name", how="left")
 
-joined.to_file(f"{data_path}/pastoral_owned/wa_pastoral_ownership.shp")
+joined.to_file(f"{data_path}/pastoral_owned/qld_pastoral_ownership.shp")

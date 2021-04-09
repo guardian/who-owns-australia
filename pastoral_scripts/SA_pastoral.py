@@ -25,7 +25,6 @@ def fuzzy_merge(df_1, df_2, key1, key2, threshold=90, limit=2):
     
     return df_1
 
- 
 
 sa_pastoral = f"{data_path}/pastoral/sa_pastoral.shp"
 gdf = gpd.read_file(sa_pastoral)
@@ -42,46 +41,29 @@ joel_sa.columns = ['Name', "Owner", "Source"]
 extracted_pastoral = f"{data_path}/Extracted_pastoral.csv"
 extra = pd.read_csv(extracted_pastoral)
 
-
 extra = extra.loc[extra['State'] == "SA"]
 extra = extra[['Name', 'Owner (Josh)', 'Source']]
 extra.columns = ['Name', "Owner", "Source"]
 extra['Name'] = extra['Name'].str.title()
-# print(joel_sa)
-# print(extra)
 
+
+# Only select the pastoral properties in extra that aren't in Joel's
 extra = fuzzy_merge(extra, joel_sa, "Name", "Name")
-extra = extra.loc[pd.notna(extra['matches'])]
-print(extra)
-
-# matched = fuzzy_merge(gdf, joel_sa, "NAME", "Pastoral Station")
-
-# combo = joel_sa.append(extra)
-# combo.drop_duplicates(subset=['Name'], keep="first")
+extra = extra.loc[extra['matches'] == '']
 
 
-# print(combo)
+extra = extra[['Name', 'Owner', 'Source']]
 
-# matched = fuzzy_merge(gdf, joel_sa, "NAME", "Pastoral Station")  
+combo = joel_sa.append(extra)
+combo.drop_duplicates(subset=['Name'], keep="first")
 
-# print(matched)
-# print(joel_sa)
+matched = fuzzy_merge(gdf, combo, "NAME", "Name")  
 
-# gdf = gdf.dropna(subset=["NAME"])
-# print(gdf.columns)
-# # CSV of pastoral properties/owners extracted from the article last year, as well as Josh research
-# confirmed_pastoral = f"{data_path}/Extracted_pastoral.csv"
+joined = matched.merge(combo, left_on="matches", right_on="Name", how="left")
 
-# # CSV of Pastoral properties extracted from SA cadastrial:
-# cad_pastoral = f"{data_path}/SA/sa_pastoral_extraction.csv"
+joined = joined[['NAME', 'PROPERTYTY', 'STATION_NO', 'SHAPE_Leng',
+       'SHAPE_Area', 'geometry', 'Owner', 'Source']]
 
-# con = pd.read_csv(confirmed_pastoral)
-# con = con.loc[con['State'] == "SA"]
-# con = con[['Name', 'Owner (Josh)', 'Source']]
-# con['Name'] = con['Name'].str.title()
+print(joined)
 
-# cad = pd.read_csv(cad_pastoral)
-
-
-# print(cad)
-# print(cad.columns)
+joined.to_file(f"{data_path}/pastoral_owned/sa_pastoral_ownership.shp")
