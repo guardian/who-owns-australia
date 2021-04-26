@@ -26,6 +26,7 @@ gdf.loc[gdf['Owner'] == "Heytesbury Pty Ltd", 'Owner'] = 'Heytesbury Cattle Comp
 
 gdf.loc[gdf['Owner'] == 'Paraway Pastoral Co', 'Owner'] = 'Paraway Pastoral Company'
 
+gdf.loc[gdf['Owner'] == 'Cleveland Agriculture (Harris family)', 'Owner'] = 'Cleveland Agriculture'
 
 merged = gdf.merge(df, on='Owner', how='left')
 
@@ -33,7 +34,7 @@ merged = merged[['NAME', 'Owner', 'Source', 'Category', 'geometry', 'Area', 'Ran
 
 merged.columns = ['Name', 'Owner', 'Source', 'Category', 'geometry', 'Owner area', 'Owner rank']
 
-merged.to_file(f'{data_path}/final-ish/pastoral_owner_dissolved_null_category_ranked.shp')
+# merged.to_file(f'{data_path}/final-ish/pastoral_owner_dissolved_null_category_ranked.shp')
 
 # print(merged.loc[merged['Owner'] == 'North Australian Pastoral Company'])
 
