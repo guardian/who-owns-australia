@@ -4,8 +4,12 @@ from fuzzywuzzy import fuzz
 from fuzzywuzzy import process 
 
 # List of pastoral properties (and owners) from Joel
-xcel = f"{data_path}/Pastoral_ownership_data_2020_08_18_noWA.xlsx"
-joel = pd.read_excel(xcel, sheet_name="1. Pastoral Station Ownership", skiprows=2)
+# xcel = f"{data_path}/Pastoral_ownership_data_2020_08_18_noWA.xlsx"
+# joel = pd.read_excel(xcel, sheet_name="1. Pastoral Station Ownership", skiprows=2)
+xcel = f"{data_path}/joel_pastoral.csv"
+joel = pd.read_csv(xcel)
+print(joel)
+print(joel.columns)
 
 # List of Pastoral properties (and owners) from Weekly Times and Josh research
 wt = f"{data_path}/Extracted_pastoral.csv"
@@ -13,13 +17,16 @@ wt = pd.read_csv(wt)
 wt = wt[['Name', 'State', 'Owner (Josh)', 'Source']]
 
 # List of Pastoral properties extracted from Cadastrial, including areas
-wacv = f"{data_path}/WA/WApastoral.csv"
+wacv = f"{data_path}/WA/WA_second_extraction.csv"
 wa = pd.read_csv(wacv)
-wa = wa[['property_n', 'Shape_Leng', 'Shape_Area']]
-wa['property_n'] = wa['property_n'].str.title()
+# wa = wa[['property_n', 'Shape_Leng', 'Shape_Area']]
+wa['Owner'] = wa['Owner'].str.title()
 
 
-
+ntcv = f"{data_path}/NT/NTPastoral.csv"
+nt = pd.read_csv(ntcv)
+print(nt)
+print(nt.columns)
 
 def fuzzy_merge(df_1, df_2, key1, key2, threshold=90, limit=2):
     """

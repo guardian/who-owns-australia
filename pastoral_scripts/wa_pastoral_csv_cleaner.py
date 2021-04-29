@@ -1,11 +1,12 @@
-import geopandas as gpd 
 import pandas as pd 
 from paths import data_path
 from fuzzywuzzy import fuzz 
 from fuzzywuzzy import process 
+import geopandas as gpd 
 # pd.set_option("display.max_rows", None, "display.max_columns", None)
 
-def fuzzy_merge(df_1, df_2, key1, key2, threshold=90, limit=2):
+
+def fuzzy_merge(df_1, df_2, key1, key2, threshold=90, limit=1):
     """
     :param df_1: the left table to join
     :param df_2: the right table to join
@@ -25,17 +26,27 @@ def fuzzy_merge(df_1, df_2, key1, key2, threshold=90, limit=2):
     
     return df_1
 
+# List of Pastoral properties extracted from Cadastrial, including areas
+# wacv = f"{data_path}/WA/WA_second_extraction.csv"
+# wa = pd.read_csv(wacv)
+# # wa = wa[['property_n', 'Shape_Leng', 'Shape_Area']]
+# wa['Owner'] = wa['Owner'].str.title()
+# wa['Source'] = "WA brand directory"
+
+# wa = wa.drop_duplicates(subset="Station", keep="last")
+
+
+wa_pastoral = f"{data_path}/pastoral/wa_pastoral.shp"
+gdf = gpd.read_file(wa_pastoral)
+gdf = gdf.dropna(subset=["PROPERTY_N"])
+gdf = gdf.loc[gdf['Pastoral_L'] != "Mining"]
+
+
 # CSV of pastoral properties/owners extracted from the article last year, as well as Josh research
 extracted_pastoral = f"{data_path}/Extracted_pastoral.csv"
 
 # CSV of WA Pastoral properties/ owners scraped from the WA Brand Registry
 wa_brand_scraped = f"{data_path}/WA/WA_second_extraction.csv"
-
-# wa_pastoral = f"{data_path}/pastoral/wa_pastoral.shp"
-# gdf = gpd.read_file(wa_pastoral)
-# gdf = gdf.dropna(subset=["PROPERTY_N"])
-# gdf = gdf.loc[gdf['Pastoral_L'] != "Mining"]
-
 
 
 extra = pd.read_csv(extracted_pastoral)
@@ -61,12 +72,22 @@ bran_df = bran_df[['Name', 'Owner', 'Source']]
 combo = extra.append(bran_df)
 combo = combo.dropna(subset=["Owner"])
 
-print(combo)
 
-# matched = fuzzy_merge(gdf, combo, "PROPERTY_N", "Name")  
 
-# joined = matched.merge(combo, left_on="matches", right_on="Name", how="left")
 
-# joined.to_file(f"{data_path}/pastoral_owned/wa_pastoral_ownership.shp")
+matched = fuzzy_merge(combo, gdf, "Name", "PROPERTY_N")
 
-# print(joined)
+
+matches = matched[['matches', 'Owner', "Source"]]
+
+# print(matches)
+matches.columns = ['Station', 'Owner', "Source"]
+
+# print(matches)
+
+# # matches['Station'] = matches['Station'].str.split(",")[0]
+
+with open(f"{data_path}/WA/WA_second_extraction_cleaned.csv", 'w') as f:
+    matches.to_csv(f, index=False, header=True)
+
+
