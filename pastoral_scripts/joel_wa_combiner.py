@@ -40,10 +40,21 @@ wa = pd.read_csv(wacv)
 
 # wa['Area'] = wa['Area']/10000
 
+
+wa.loc[wa['PROPERTY_N'] == 'CARRANYA STATION', 'WA_second_extraction_cleaned_Owner'] = 'Indigenous Land and Sea Corporation'
+wa.loc[wa['PROPERTY_N'] == 'CARRANYA STATION', 'WA_second_extraction_cleaned_Source'] = 'https://www.ilsc.gov.au/wp-content/uploads/2020/03/ILSCHeldGrantedPropertiesDec2019.pdf'
+
+wa.loc[wa['PROPERTY_N'] == 'MULGA DOWNS STATION', 'WA_second_extraction_cleaned_Owner'] = 'Hancock Prospecting'
+wa.loc[wa['PROPERTY_N'] == 'MULGA DOWNS STATION', 'WA_second_extraction_cleaned_Source'] = 'https://www.hancockprospecting.com.au/about-us/'
+
+
+
 wa['PROPERTY_N'] = wa['PROPERTY_N'].str.title()
 wa.rename(columns={"hectares":"Area"}, inplace=True)
 
 wa = wa[['PROPERTY_N', 'Area', 'WA_second_extraction_cleaned_Owner', 'WA_second_extraction_cleaned_Source']]
+
+
 
 combined = wa.groupby(by=['PROPERTY_N', 'WA_second_extraction_cleaned_Owner', 'WA_second_extraction_cleaned_Source']).sum().reset_index()
 
@@ -92,7 +103,25 @@ sorted.loc[sorted['Owner'] == "Heytesbury Pty Ltd", 'Owner'] = 'Heytesbury Cattl
 sorted.loc[sorted['Owner'] == 'Paraway Pastoral Co', 'Owner'] = 'Paraway Pastoral Company'
 sorted.loc[sorted['Owner'] == 'Cleveland Agriculture (Harris family)', 'Owner'] = 'Cleveland Agriculture'
 
-sorted = sorted.groupby(by=['Station', "State", 'Owner',"Category", 'Source']).sum().reset_index()
+
+sorted.loc[sorted['Station'] == 'South Galway Station', 'Station'] = 'South Galway'
+sorted.loc[sorted['Station'] == 'South Galway Station', 'Station'] = 'South Galway'
+
+sorted.loc[sorted['Station'] == 'Avon Downs', 'Station'] = 'Avon Downs'
+sorted.loc[sorted['Station'] == 'Avon Downs', 'State'] = 'QLD'
+
+sorted.loc[sorted['Owner'] == 'Australian Agricultural Company', 'Source'] = 'https://aaco.com.au/operations/properties'
+
+unknowns = ['Bulga Downs Station', 'Brighton Downs', 'Thorner', 'Welltree']
+
+sorted.loc[sorted['Station'].isin(unknowns), "Owner"] = "Unknown"
+
+# print(sorted.loc[sorted['Owner'] == "Unknown"])
+
+sorted = sorted.loc[sorted['Station'] != 'Bulga Downs Station']
+
+print(sorted.loc[sorted['Station'].isin(unknowns)])
+
 
 
 # print(sorted)
@@ -103,23 +132,53 @@ innaminckha = pd.DataFrame.from_records([{"Station": "Innamincka Station", "Stat
  "Owner": "S Kidman & Company", "Category":"Australian", "Area":"1355000", 
  "Source":"https://www.kidman.com.au/locations/innamincka/"}])
 
+aroona = pd.DataFrame.from_records([{"Station": "Aroona Station", "State": "NT",
+ "Owner": "Hancock Prospecting", "Category":"Australian", "Area":"147510", 
+ "Source":"https://www.hancockprospecting.com.au/about-us/"}]) 
+
+new_adds = pd.DataFrame.from_records([{"Station": "De Grey", "State": "WA",
+ "Owner": "Bettini Beef", "Category":"Australian", "Area":"374634", 
+ "Source":"https://www.abc.net.au/news/rural/2020-07-22/station-workers-go-alcohol-free-for-dry-july/12478406"},
+ {"Station": "Gogo", "State": "WA",
+ "Owner": "Cleveland Agriculture", "Category":"Australian", "Area":"392144", 
+ "Source":"https://www.farmweekly.com.au/story/7002286/sale-confirmed-for-major-cattle-company-for-500m/"},
+ {"Station": "Balfour Downs", "State": "WA",
+ "Owner": "Ma Xingfa", "Category":"Australian", "Area":"431279", 
+ "Source":"https://www.beefcentral.com/property/chinese-owner-to-offload-was-balfour-downs-with-expectations-of-32-40m/"},
+ {"Station": "Milly Milly", "State": "WA",
+ "Owner": "Senghoo Australia", "Category":"Australian", "Area":"308218", 
+ "Source":"https://www.weeklytimesnow.com.au/agribusiness/agjournal/who-owns-australias-farms-2021-the-full-list-of-more-than-1000-properties/news-story/27c67d3d0e84fd3e6735aee25730c24c"},
+ {"Station": "Three rivers", "State": "WA",
+ "Owner": "Forsyth family", "Category":"Australian", "Area":"376908", 
+ "Source":"https://soilsforlife.org.au/three-rivers-station-restoring-the-gascoyne-rangeland-with-commitment-cooperation-and-hard-work/"},
+ {"Station": "Drysdale River", "State": "WA",
+ "Owner": "Koeyers family", "Category":"Australian", "Area":"399348", 
+ "Source":"https://www.abc.net.au/radio/kimberley/programs/breakfast/drysdale-station/13305658"}
+ ]) 
+
+sorted = sorted.groupby(by=['Station', "State", 'Owner',"Category", 'Source']).sum().reset_index()
+
 # print(innaminckha)
 
 sorted = sorted.append(innaminckha)
+sorted = sorted.append(aroona)
+sorted = sorted.append(new_adds)
 
 # print(sorted)
-
+# print(sorted.loc[sorted['Owner'] == "Hancock Prospecting"])
 
 
 # sorted = sorted.sort_values(by="Area", ascending=False)
 
 sorted = sorted[["Station", "State", "Owner", "Category", "Area", "Source"]]
 
-print(sorted.loc[sorted['Owner'] == "Jumbuck "])
+# print(sorted.loc[sorted['Owner'] == "Jumbuck "])
 
 sorted["Area"] = pd.to_numeric(sorted["Area"])
 
 sorted = sorted.sort_values(by="Area", ascending=False)
+
+# print(sorted)
 
 with open(f"{data_path}/pastoral_joel_brand_super_merge.csv", 'w') as f:
     sorted.to_csv(f, index=False, header=True)

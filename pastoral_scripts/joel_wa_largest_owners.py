@@ -4,15 +4,15 @@ pd.set_option("display.max_rows", None, "display.max_columns", None)
 
 
 
-# fillo = f"{data_path}/pastoral_joel_brand_super_merge.csv"
-# target = '/largest_pastoral_joel_brand_super_merge.csv'
+fillo = f"{data_path}/pastoral_joel_brand_super_merge.csv"
+target = '/largest_pastoral_joel_brand_super_merge.csv'
 
-fillo = f"{data_path}/largest_pastoral_joel_sheet_download.csv"
-target = '/largest_pastoral_joel_sheet_merged.csv'
+# fillo = f"{data_path}/largest_pastoral_joel_sheet_download.csv"
+# target = '/largest_pastoral_joel_sheet_merged.csv'
 
 df = pd.read_csv(fillo)
 
-df['Area'] = df['Area'].str.replace(",", '')
+# df['Area'] = df['Area'].str.replace(",", '')
 df['Area'] = pd.to_numeric(df['Area'])
 largest = df.groupby(by='Owner')['Area'].sum().reset_index()
 

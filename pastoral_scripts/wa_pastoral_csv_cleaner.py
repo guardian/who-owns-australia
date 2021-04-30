@@ -87,7 +87,8 @@ matches.columns = ['Station', 'Owner', "Source"]
 
 # # matches['Station'] = matches['Station'].str.split(",")[0]
 
-with open(f"{data_path}/WA/WA_second_extraction_cleaned.csv", 'w') as f:
-    matches.to_csv(f, index=False, header=True)
+# with open(f"{data_path}/WA/WA_second_extraction_cleaned.csv", 'w') as f:
+#     matches.to_csv(f, index=False, header=True)
 
 
+print(matches)
