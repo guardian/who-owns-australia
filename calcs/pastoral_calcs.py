@@ -20,19 +20,25 @@ grouped = df.groupby(by="Owner").sum().reset_index()
 grouped = grouped.sort_values(by="Area", ascending=False)
 grouped['Rank'] = grouped['Area'].rank(ascending=False)
 
+
+top_5 = grouped[:5]
+top_10 = grouped[:10]
 top_20 = grouped[:20]
 top_55 = grouped[:55]
 top_100 = grouped[:100]
 
+top_5_sum = top_5['Area'].sum()
+top_10_sum = top_10['Area'].sum()
 top_20_sum = top_20['Area'].sum()
 top_55_sum = top_55['Area'].sum()
 top_100_sum = top_100['Area'].sum()
 
 total = df['Area'].sum()
 
-new = [{"Cat": "Australia", "Area": Australia}, {"Cat": "Pastoral we have", "Area": total},
- {"Cat": "Top 20", "Area": top_20_sum}, {"Cat": "Top 55", "Area": top_55_sum}, 
- {"Cat": "Top 100", "Area": top_100_sum}]
+new = [{"Cat": "Top 5", "Area": top_5_sum}, {"Cat": "Top 10", "Area": top_10_sum},
+    {"Cat": "Top 20", "Area": top_20_sum}, {"Cat": "Top 55", "Area": top_55_sum}, 
+ {"Cat": "Top 100", "Area": top_100_sum}, {"Cat": "Pastoral we have", "Area": total},
+ {"Cat": "Australia", "Area": Australia}]
 
 # # total 
 
